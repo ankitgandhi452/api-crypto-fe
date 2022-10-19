@@ -1,0 +1,24 @@
+{
+  "name": "api-crypto-fe",
+  "version": "0.0.1",
+  "description": "Api Crypto Client",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node tests",
+    "build:source": "rimraf dist/ && babel src/ --out-dir dist/ --copy-files",
+    "clean": "rimraf dist/ && rimraf test-dist/",
+    "build": "npm run build:source"
+  },
+  "repository": "git@github.com:ankitgandhi452/api-crypto-fe.git",
+  "author": "Ankit Gandhi <ankitgandhi452@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.8.3",
+    "@babel/plugin-proposal-object-rest-spread": "^7.9.5",
+    "@babel/preset-env": "^7.8.3",
+    "@babel/register": "^7.8.3",
+    "rimraf": "^3.0.2",
+    "standard": "^17.0.0"
+  }
+}
