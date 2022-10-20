@@ -48,15 +48,6 @@ export default class HeaderManager {
     this.get = this.get.bind(this)
     this.set = this.set.bind(this)
     this.del = this.del.bind(this)
-
-    this.getAppUid = this.getAppUid.bind(this)
-    this.setAppUid = this.setAppUid.bind(this)
-
-    this.getAccessToken = this.getAccessToken.bind(this)
-    this.setAccessToken = this.setAccessToken.bind(this)
-
-    this.getSessionId = this.getSessionId.bind(this)
-    this.setSessionId = this.setSessionId.bind(this)
   }
 
   appendCustomHeader (data, headers) {
@@ -113,35 +104,5 @@ export default class HeaderManager {
     const currentValue = this.headerStore[storeKey]
     delete this.headerStore[storeKey]
     return currentValue
-  }
-
-  getAppUid (value = '') {
-    const appUidKey = this.STORE_KEYS_MAP.APP_UID
-    return this.get(appUidKey)
-  }
-
-  setAppUid (value = '') {
-    const appUidKey = this.STORE_KEYS_MAP.APP_UID
-    return this.set(appUidKey, value)
-  }
-
-  getAccessToken (value = '') {
-    const accessTokenKey = this.STORE_KEYS_MAP.ACCESS_TOKEN
-    return this.get(accessTokenKey)
-  }
-
-  setAccessToken (value = '') {
-    const accessTokenKey = this.STORE_KEYS_MAP.ACCESS_TOKEN
-    return this.set(accessTokenKey, value)
-  }
-
-  getSessionId (value = '') {
-    const sessionIdKey = this.STORE_KEYS_MAP.SESSION_ID
-    return this.get(sessionIdKey)
-  }
-
-  setSessionId (value = '') {
-    const sessionIdKey = this.STORE_KEYS_MAP.SESSION_ID
-    return this.set(sessionIdKey, value)
   }
 }

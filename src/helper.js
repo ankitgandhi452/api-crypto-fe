@@ -3,7 +3,7 @@ import qs from 'qs'
 export function formatRequestOptions (options, API_ROUTES = {}) {
   const { apiPath = '', urlParams = {}, queryParams = {}, url, method, ...requestOptions } = options
 
-  let { path: _url, method: _method } = (apiPath && getPathFromApiRoutes(apiPath, API_ROUTES)) || url
+  let { path: _url = url, method: _method = method } = (apiPath && getPathFromApiRoutes(apiPath, API_ROUTES)) || {}
   _url = replaceUrlParams(_url, urlParams)
   const qsOptions = { arrayFormat: 'comma', allowDots: true, addQueryPrefix: true }
   _url += qs.stringify(queryParams, qsOptions)

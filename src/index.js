@@ -8,7 +8,7 @@ import HeaderManager from './HeaderManager'
 
 const { ERROR_CLASSIFICATIONS } = ApiError
 
-export default function HttpClientCreator (CONFIG, CONSTANTS = {}) {
+export default function HttpClientCreator(CONFIG, CONSTANTS = {}) {
   const _CONFIG = { ...DEFAULT_CONFIG, ...CONFIG }
   const _CONSTANTS = { ...DEFAULT_CONSTANTS, ...CONSTANTS }
 
@@ -38,10 +38,11 @@ export default function HttpClientCreator (CONFIG, CONSTANTS = {}) {
 
   const headerManger = new HeaderManager(_CONSTANTS)
 
-  async function request (options = {}) {
+  async function request(options = {}) {
     const _options = formatRequestOptions(options)
     const { transformRequest = [], transformResponse = [] } = options
-    const apiCryptoFE = new ApiCryptoFE('', _CONFIG, _CONSTANTS)
+    const publicKey = headerManger.get('PUBLIC_KEY')
+    const apiCryptoFE = new ApiCryptoFE(publicKey, _CONFIG, _CONSTANTS)
     const requestOptions = {
       ..._options,
       transformRequest: [
@@ -60,6 +61,7 @@ export default function HttpClientCreator (CONFIG, CONSTANTS = {}) {
 
     try {
       const response = await axiosInstance.request(requestOptions)
+      response.data = await response.data
       headerManger.storeResponseHeaderValues(response.headers)
       return response
     } catch (error) {
@@ -107,37 +109,17 @@ export default function HttpClientCreator (CONFIG, CONSTANTS = {}) {
     }
   }
 
-  function getAppUid () {
-    return headerManger.getAppUid()
-  }
-
-  function setAppUid (value = '') {
-    return headerManger.setAppUid(value)
-  }
-
-  function getAccessToken () {
-    return headerManger.getAccessToken()
-  }
-
-  function setAccessToken (value = '') {
-    return headerManger.setAccessToken(value)
-  }
-
-  function getSessionId () {
-    return headerManger.getSessionId()
-  }
-
-  function setSessionId (value = '') {
-    return headerManger.setSessionId(value)
-  }
-
   return {
     request,
-    getAppUid,
-    setAppUid,
-    getAccessToken,
-    setAccessToken,
-    getSessionId,
-    setSessionId
+    get: headerManger.get,
+    set: headerManger.set,
+    del: headerManger.del
   }
+}
+
+const context = {
+  CONFIG: {},
+  CONSTANTS: {},
+  STORE_KEY_MAP: {},
+  store: {},
 }
