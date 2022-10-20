@@ -12,7 +12,7 @@ export const RSA_CONSTANTS = {
     hash: 'SHA-256'
   },
 
-  KEY_USAGE: ['wrapKey'],
+  KEY_USAGE: ['wrapKey']
 
   // ERRORS: {
   //   INVALID_ENCRYPTION_DATA: {
@@ -47,7 +47,7 @@ export const AES_256_GCM_CONSTANTS = {
   PLAIN_TEXT_FORMAT: 'utf8',
   CIPHER_TEXT_FORMAT: 'base64',
   AUTH_TAG_LENGTH: 16,
-  DATA_SEPARATOR: '.',
+  DATA_SEPARATOR: '.'
 
   // ERRORS: {
   //   INVALID_ENCRYPTION_PARAMS: {
@@ -67,8 +67,4 @@ export const AES_256_GCM_CONSTANTS = {
   //     code: 'INVALID_DECRYPTION_PAYLOAD'
   //   }
   // }
-}
-
-const AES_GCM_CONSTANTS = {
-  AES_ALGORITHM: 'AES-GCM',
 }
