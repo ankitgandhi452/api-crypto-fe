@@ -1,7 +1,7 @@
 import Crypto from './Crypto'
 
 export default class ApiCryptoFE {
-  constructor (publicKey = '', CONFIG = {}, CONSTANTS = {}) {
+  constructor(publicKey = '', CONFIG = {}, CONSTANTS = {}) {
     const { DISABLE_CRPTOGRAPHY = false } = CONFIG
     const { ENCRYPTION_KEY_REQUEST_HEADER } = CONSTANTS
 
@@ -16,10 +16,10 @@ export default class ApiCryptoFE {
     this.decryptData = this.decryptData.bind(this)
   }
 
-  async generateAndWrapKey (reqData, headers) {
+  async generateAndWrapKey(reqData, headers) {
     const { DISABLE_CRPTOGRAPHY, ENCRYPTION_KEY_REQUEST_HEADER } = this
 
-    if (DISABLE_CRPTOGRAPHY) { return reqData }
+    if (DISABLE_CRPTOGRAPHY || !this.publicKey) { return reqData }
 
     const { encryptionKey, encryptedEncryptionKey } = await Crypto.generateAndWrapKey(this.publicKey)
     this.encryptionKey = encryptionKey
@@ -28,22 +28,24 @@ export default class ApiCryptoFE {
     return reqData
   }
 
-  async encryptData (reqData, headers) {
+  async encryptData(reqData, headers) {
     const { DISABLE_CRPTOGRAPHY } = this
 
-    if (DISABLE_CRPTOGRAPHY) { return reqData }
+    if (DISABLE_CRPTOGRAPHY || !this.publicKey) { return reqData }
 
     const payload = await Crypto.encryptData(reqData, this.encryptionKey)
     return { payload }
   }
 
-  async decryptData (resData) {
+  async decryptData(resData) {
     const { DISABLE_CRPTOGRAPHY } = this
 
-    if (DISABLE_CRPTOGRAPHY) { return resData }
+    if (DISABLE_CRPTOGRAPHY || !this.publicKey) { return resData }
 
     const { payload } = resData
     const data = await Crypto.decryptData(payload, this.encryptionKey)
     return data
   }
+
+  setPu
 }

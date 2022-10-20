@@ -16,7 +16,8 @@ export default class HeaderManager {
     const STORE_KEYS_MAP = {
       SESSION_ID: 'SESSION_ID',
       ACCESS_TOKEN: 'ACCESS_TOKEN',
-      APP_UID: 'APP_UID'
+      APP_UID: 'APP_UID',
+      PUBLIC_KEY: 'PUBLIC_KEY'
     }
 
     const CUSTOM_HEADER_CONFIG = [
@@ -47,21 +48,34 @@ export default class HeaderManager {
     this.get = this.get.bind(this)
     this.set = this.set.bind(this)
     this.del = this.del.bind(this)
+
+    this.getAppUid = this.getAppUid.bind(this)
+    this.setAppUid = this.setAppUid.bind(this)
+
+    this.getAccessToken = this.getAccessToken.bind(this)
+    this.setAccessToken = this.setAccessToken.bind(this)
+
+    this.getSessionId = this.getSessionId.bind(this)
+    this.setSessionId = this.setSessionId.bind(this)
   }
 
   appendCustomHeader (data, headers) {
+    const requestHeaders = {}
     this.CUSTOM_HEADER_CONFIG.forEach((config) => {
       const { REQUEST_HEADER_KEY, STORE_KEY } = config
       const headerValue = this.headerStore[STORE_KEY]
       if (headerValue) {
-        headers[REQUEST_HEADER_KEY.toLowerCase()] = headerValue
+        requestHeaders[REQUEST_HEADER_KEY.toLowerCase()] = headerValue
       }
     })
 
     // Set Request Id
     const { REQUEST_ID_REQUEST_HEADER_KEY } = this.CONSTANTS
     const requestId = v4()
-    headers[REQUEST_ID_REQUEST_HEADER_KEY.toLowerCase()] = requestId
+    requestHeaders[REQUEST_ID_REQUEST_HEADER_KEY.toLowerCase()] = requestId
+
+    // Keeping user specified headers priority
+    headers = { ...requestHeaders, ...headers }
 
     return data
   }
@@ -74,10 +88,10 @@ export default class HeaderManager {
     })
   }
 
-  set (key = '', value = '') {
+  set (key = '', value = '', force = false) {
     const storeKey = this.STORE_KEYS_MAP[key]
 
-    if (!storeKey || !value) { return }
+    if (!storeKey || (!value && !force)) { return }
 
     this.headerStore[storeKey] = value
     return value
@@ -99,5 +113,35 @@ export default class HeaderManager {
     const currentValue = this.headerStore[storeKey]
     delete this.headerStore[storeKey]
     return currentValue
+  }
+
+  getAppUid (value = '') {
+    const appUidKey = this.STORE_KEYS_MAP.APP_UID
+    return this.get(appUidKey)
+  }
+
+  setAppUid (value = '') {
+    const appUidKey = this.STORE_KEYS_MAP.APP_UID
+    return this.set(appUidKey, value)
+  }
+
+  getAccessToken (value = '') {
+    const accessTokenKey = this.STORE_KEYS_MAP.ACCESS_TOKEN
+    return this.get(accessTokenKey)
+  }
+
+  setAccessToken (value = '') {
+    const accessTokenKey = this.STORE_KEYS_MAP.ACCESS_TOKEN
+    return this.set(accessTokenKey, value)
+  }
+
+  getSessionId (value = '') {
+    const sessionIdKey = this.STORE_KEYS_MAP.SESSION_ID
+    return this.get(sessionIdKey)
+  }
+
+  setSessionId (value = '') {
+    const sessionIdKey = this.STORE_KEYS_MAP.SESSION_ID
+    return this.set(sessionIdKey, value)
   }
 }
