@@ -7,20 +7,26 @@ import httpClientCreator from '../src'
 // Post Api
 global.crypto = crypto
 
-let expectedDecrptedData, apiCryptoFEInstanceDisablePayloadCryptoGrphy, apiCryptoFEInstanceEnabledPayloadCryptoGrphy
+let httpClient
 
-const API_ROUTES = {
-  _BASE: 'http://localhost:8080'
-}
-const CONFIG = { API_ROUTES }
-const httpClient = httpClientCreator(CONFIG)
+beforeAll(async () => {
+  const API_ROUTES = {
+    _BASE: 'http://localhost:8080'
+  }
+  const DISABLE_CRPTOGRAPHY = false
+  const CONFIG = { API_ROUTES, DISABLE_CRPTOGRAPHY }
+  httpClient = httpClientCreator(CONFIG)
+
+  const publicKey = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnWhQNjFr0YNgVZcye2EU5ZPNCoLiTH55M3IzK8ba7ZnJBn1LritHqvJMvEikIaQd3CJB3JEhJeFFNz8utKdbCGiQMsvPUWRU3ldP1E7I6Wd2dhmzll/GElNUuc8sqzEpBcSCVwMtCQdvn0jBbTQw8/Qi2c31Q+vAn5fqGRroANUMMwQtMVk/DIi3MRo8IUkcemlhtZVEnszgKJE77onLIpq80+7MECl34cWvwZvUeJYm99ML4cGUua1AMTbbGlLiZXm68iXp6p+eAe4MLDUWicqRg1Zl3DfNjGkN0TuJmX1HFY7Teeh6YnhpPyL67BgqV24Q5FuDJkl6UXRtqrQ4sQIDAQAB'
+
+  httpClient.set('PUBLIC_KEY', publicKey)
+})
 
 describe('Run HttpClient Test', () => {
   test('Should be able to make Get Request before Handshake', async () => {
-    const options = { url: '/handshake', method: 'GET' }
+    const options = { url: '/api-crypto-sample/service', method: 'POST', data: { test: 'test' } }
     const response = await httpClient.request(options)
-    const { status, data, config } = response
+    const { status } = response
     expect(status).toBe(200)
-    console.log('data', data)
   })
 })
