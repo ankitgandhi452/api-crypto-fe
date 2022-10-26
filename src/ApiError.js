@@ -7,7 +7,7 @@ const ERROR_CLASSIFICATIONS = {
   API_CALL: 'API_CALL_ERROR',
   NETWORK_ERROR: 'NETWORK_ERROR'
 }
-const SERVICE_NAME = 'LEAP FE AXISBANK'
+const SERVICE_NAME = 'HttpClient'
 const ERROR_NAME = 'ApiError'
 
 export default class ApiError extends Error {

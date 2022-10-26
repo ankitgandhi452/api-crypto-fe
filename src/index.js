@@ -1,83 +1,53 @@
 import axios from 'axios'
-import DEFAULT_CONSTANTS from './defaults/CONSTANTS'
-import DEFAULT_CONFIG from './defaults/CONFIG'
-import ApiCryptoFE from './ApiCryptoFe'
 import ApiError from './ApiError'
 import { formatRequestOptions } from './helper'
-import HeaderManager from './HeaderManager'
+import Context, { STORE_KEYS_MAP } from './Context'
+import Interceptors from './Interceptors'
 
 const { ERROR_CLASSIFICATIONS } = ApiError
 
-export default function HttpClientCreator (CONFIG, CONSTANTS = {}) {
-  const _CONFIG = { ...DEFAULT_CONFIG, ...CONFIG }
-  const _CONSTANTS = { ...DEFAULT_CONSTANTS, ...CONSTANTS }
+export default class HttpClient {
+  constructor (_CONFIG = {}, _CONSTANTS = {}) {
+    this.context = new Context(_CONFIG, _CONSTANTS)
+    this.request = this.request.bind(this)
 
-  const {
-    TIMEOUT,
-    API_KEY_REQUEST_HEADER_KEY,
-    CLIENT_ID_KEY_REQUEST_HEADER,
-    CLIENT_ID
-
-  } = _CONSTANTS
-  const { API_KEY, API_ROUTES } = _CONFIG
-
-  const { _BASE, ...ROUTE_PATHS } = API_ROUTES
-  const routesPresent = !!Object.keys(ROUTE_PATHS || {}).length
-  if (!_BASE && routesPresent) {
-    console.warn('HttpClientCreator: _BASE is not passed in API_ROUTES')
+    this.setStore = this.context.set
+    this.getStore = this.context.get
+    this.delStore = this.context.del
   }
 
-  const axiosInstance = axios.create({
-    baseURL: _BASE,
-    timeout: TIMEOUT,
-    headers: {
-      [API_KEY_REQUEST_HEADER_KEY]: API_KEY,
-      [CLIENT_ID_KEY_REQUEST_HEADER]: CLIENT_ID
-    }
-  })
-
-  const headerManger = new HeaderManager(_CONSTANTS)
-
-  async function request (options = {}) {
-    const _options = formatRequestOptions(options)
-    const { transformRequest = [], transformResponse = [] } = options
-    const apiCryptoFE = new ApiCryptoFE('', _CONFIG, _CONSTANTS)
-    const requestOptions = {
-      ..._options,
-      transformRequest: [
-        ...transformRequest,
-        headerManger.appendCustomHeader,
-        apiCryptoFE.generateAndWrapKey,
-        apiCryptoFE.encryptData,
-        ...axios.defaults.transformRequest
-      ],
-      transformResponse: [
-        ...axios.defaults.transformResponse,
-        apiCryptoFE.decryptData,
-        ...transformResponse
-      ]
-    }
+  async request (options = {}) {
+    const client = axios.create(this.context.axiosProps)
+    const requestOptions = formatRequestOptions(options)
+    const interceptors = new Interceptors(this.context)
+    client.interceptors.request.use(interceptors.requestInterceptor)
+    client.interceptors.response.use(interceptors.responseInterceptor)
 
     try {
-      const response = await axiosInstance.request(requestOptions)
-      headerManger.storeResponseHeaderValues(response.headers)
+      const response = await client.request(requestOptions)
       return response
     } catch (error) {
       const { request, response } = error
       // Handle Axios Response Error
       if (response) {
         const { status, data: body } = response
-        const { statusCode, message } = body
-        const classification = ERROR_CLASSIFICATIONS.API_CALL
+        const { statusCode, message, error: err } = body
+        const { code, publicKey } = err
 
+        if (code === 'API_CRYPTO::PRIVATE_KEY_NOT_FOUND') {
+          this.setStore(STORE_KEYS_MAP.PUBLIC_KEY, publicKey)
+          return await this.request(options)
+        }
+
+        const classification = ERROR_CLASSIFICATIONS.API_CALL
         const errorParams = {
           statusCode: (statusCode || status),
           message: (message || undefined),
           classification
         }
         const errorObj = body
-        const err = new ApiError(errorObj, errorParams)
-        throw err
+        const apiError = new ApiError(errorObj, errorParams)
+        throw apiError
       }
 
       // Handle Axios Request Error
@@ -89,10 +59,10 @@ export default function HttpClientCreator (CONFIG, CONSTANTS = {}) {
           message,
           classification
         }
-        const err = new ApiError(error, errorParams)
+        const apiError = new ApiError(error, errorParams)
         // logger.error(err.message, err)
-        delete err.error.stack
-        throw err
+        delete apiError.error.stack
+        throw apiError
       }
 
       // Handle any other form of error
@@ -101,43 +71,9 @@ export default function HttpClientCreator (CONFIG, CONSTANTS = {}) {
         statusCode: -2,
         classification
       }
-      const err = new ApiError(error, errorParams)
+      const apiError = new ApiError(error, errorParams)
       // logger.error(err.message, err)
-      throw err
+      throw apiError
     }
-  }
-
-  function getAppUid () {
-    return headerManger.getAppUid()
-  }
-
-  function setAppUid (value = '') {
-    return headerManger.setAppUid(value)
-  }
-
-  function getAccessToken () {
-    return headerManger.getAccessToken()
-  }
-
-  function setAccessToken (value = '') {
-    return headerManger.setAccessToken(value)
-  }
-
-  function getSessionId () {
-    return headerManger.getSessionId()
-  }
-
-  function setSessionId (value = '') {
-    return headerManger.setSessionId(value)
-  }
-
-  return {
-    request,
-    getAppUid,
-    setAppUid,
-    getAccessToken,
-    setAccessToken,
-    getSessionId,
-    setSessionId
   }
 }

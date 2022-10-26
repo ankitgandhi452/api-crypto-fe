@@ -1,0 +1,20 @@
+name: Tests
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+    - name: Run Jest
+      uses: stefanoeb/jest-action@1.0.3
+      with:
+          node-version: 18
+      run: yarn test
