@@ -10,7 +10,7 @@ HTTP CLIENT FE is a custom http-request package for browser with in-built suppor
 
 If you're using [ReactAppBoilerplate](https://github.com/ankitgandhi452/ReactAppBoilerplate) as recommended, requires 4 step configuration:
 
-1. Step 1 (Create a file HTTP_CLIENT_CONFIG.js)
+1. Create Config File
 
 ```js
 // src/configurations/network/HTTP_CLIENT_CONFIG.js
@@ -29,7 +29,7 @@ const HTTP_CLIENT_CONFIG = {
 export default HTTP_CLIENT_CONFIG
 ```
 
-2. Step 2 (Create a file HTTP_CLIENT_CONSTANTS.js)
+2. Create Constants File
 
 ```js
 // src/configurations/network/HTTP_CLIENT_CONSTANTS.js
@@ -45,7 +45,7 @@ const HTTP_CLIENT_CONSTANTS = {
 export default HTTP_CLIENT_CONSTANTS
 ```
 
-3. Step 3 (Create a file HttpClient.js)
+3. Create HttpClient File
 
 ```js
 import HttpClient from '@m92/http-client-fe-v2'
@@ -57,7 +57,7 @@ const HttpClient = new HttpClient(HTTP_CLIENT_CONFIG, HTTP_CLIENT_CONSTANTS)
 export default HttpClient
 ```
 
-4. Step 4 (Inject in Redux Thunk)
+4. Inject HttpClient in Redux Thunk
 
 ```js
 .....
