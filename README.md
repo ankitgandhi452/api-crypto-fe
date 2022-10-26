@@ -60,7 +60,11 @@ export default HttpClient
 4. Inject HttpClient in Redux Thunk
 
 ```js
+// src/configurations/redux/store.js
 .....
+import HttpClient from '//path/to/HttpClient/File'
+.....
+
 const middlewares = [
   thunk.withExtraArgument({ HttpClient }) // Argument can be a request object used inside all calls
 ]
