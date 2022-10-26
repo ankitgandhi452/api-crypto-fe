@@ -9,8 +9,6 @@ const { ERROR_CLASSIFICATIONS } = ApiError
 export default class HttpClient {
   constructor (_CONFIG = {}, _CONSTANTS = {}) {
     this.context = new Context(_CONFIG, _CONSTANTS)
-    this.client = axios.create(this.context.axiosProps)
-
     this.request = this.request.bind(this)
 
     this.setStore = this.context.set
@@ -19,16 +17,16 @@ export default class HttpClient {
   }
 
   async request (options = {}) {
+    const client = axios.create(this.context.axiosProps)
     const requestOptions = formatRequestOptions(options)
     const interceptors = new Interceptors(this.context)
-    this.client.interceptors.request.use(interceptors.requestInterceptor)
-    this.client.interceptors.response.use(interceptors.responseInterceptor)
+    client.interceptors.request.use(interceptors.requestInterceptor)
+    client.interceptors.response.use(interceptors.responseInterceptor)
 
     try {
-      const response = await this.client.request(requestOptions)
+      const response = await client.request(requestOptions)
       return response
     } catch (error) {
-      console.log('error', error)
       const { request, response } = error
       // Handle Axios Response Error
       if (response) {

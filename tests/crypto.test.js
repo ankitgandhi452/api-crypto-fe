@@ -3,7 +3,7 @@ import { expect, describe, beforeAll, test } from '@jest/globals'
 import { webcrypto as crypto } from 'node:crypto'
 import Crypto from '../src/Crypto'
 
-global.crypto = crypto
+global.window = { crypto }
 
 let keyData, encryptedData, decryptedData, expectedDecrptedData
 const expetedEncryptionKeyObject = { type: 'secret' }
