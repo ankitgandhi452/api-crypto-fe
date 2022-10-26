@@ -1,6 +1,6 @@
 {
-  "name": "api-crypto-fe",
-  "version": "0.0.1",
+  "name": "@m92/api-crypto-fe",
+  "version": "0.0.2",
   "description": "Api Crypto Client",
   "main": "src/index.js",
   "scripts": {
