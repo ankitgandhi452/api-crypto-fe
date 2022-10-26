@@ -10,7 +10,7 @@ global.crypto = crypto
 let
   httpClient
 
-const expectedPublicKey = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp2/gKUssBNZzG0KOqQECfGhv+Hzlp4Qj3nQhXw/+0t+WnQ6O75E1SZan59GYXek0X8fT5qs1qLRKTYn8ZNIxe3BvWRET82H+ZaAG/jakFK+a19pa49Hy4kl0Gy5xiWJ93Hudh4ZxZcdYU6wNY/x2hSEyv1ag+adPH+5A9EtZ1F4f3zl5BKsJpGqSk1ZsNDk09AyoTyA3gCMqyzfiYvpf8Tj31Dooqtlkq2xBi7UA0Z/yv/Xo9HYMtsjCQIIc0hrH0IaFhm8iBTwzVtam2CMIFaxygAPJUV4cZ7aoxjusbfGP2kyJsZlMnYAhWgvh6ljt1o3iQQDHA+sW6AeYLSNi2QIDAQAB'
+const expectedPublicKey = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2ekGU6xM6iR8sTNfpbiYNyZ8R26Zn8MbRKGuVrbMnYDPcgc9hHepxOZNAMKzb3Rf61pIv49OiAEg8fDPLp4p2p+VJd25dH9r2BqH9ZRwEA7xx9Id2ZsehZKARTa/7Y1JPu6yTihnCukpEB1oy2QD3xi9X1FvTPAjMEEx0oOLOc+vjWYDScrXmEMvprPorYDe9VdJf95cUMXpFedbgIBMdRsa7+RJ1zywRUDpY4vKxrCa022hwhrHeEzE9+0u7SaiK2C2YDyA2aAkfD4abCRsYJ47648EahxvkdLSwoq6OY7dyo/w9z/e5iYEDN0KCUgGnhU1es5Zl03SiJwkXOTkeQIDAQAB'
 
 beforeAll(async () => {
   const API_ROUTES = {
@@ -22,19 +22,19 @@ beforeAll(async () => {
 })
 
 describe('Run HttpClient Test', () => {
-  test('Should be able to make Get Request before Handshake', async () => {
-    const options = { url: '/handshake', method: 'GET' }
-    const response = await httpClient.request(options)
-    const { status, data: respBody } = response
-    const { data } = respBody
-    const { publicKey } = data
-    expect(status).toBe(200)
-    expect(publicKey).toBe(expectedPublicKey)
-  })
+  // test('Should be able to make Get Request before Handshake', async () => {
+  //   const options = { url: '/handshake', method: 'GET' }
+  //   const response = await httpClient.request(options)
+  //   const { status, data: respBody } = response
+  //   const { data } = respBody
+  //   const { publicKey } = data
+  //   expect(status).toBe(200)
+  //   expect(publicKey).toBe(expectedPublicKey)
+  // })
 
   test('Should be able to make Service Call Post Handshak', async () => {
     httpClient.setStore('PUBLIC_KEY', expectedPublicKey)
-    const options = { url: '/api-crypto-sample/service', method: 'POST', data: { test: 'test' } }
+    const options = { url: '/api-crypto-sample/service', method: 'POST' }
     const response = await httpClient.request(options)
     const { status, data: resBody } = response
     const { statusCode } = resBody

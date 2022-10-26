@@ -86,7 +86,7 @@ export default class Interceptors {
 
     const publicKey = this.context.get(STORE_KEYS_MAP.PUBLIC_KEY)
 
-    if (DISABLE_CRPTOGRAPHY || !publicKey) { return request }
+    if (DISABLE_CRPTOGRAPHY) { return request }
 
     const { encryptionKey, encryptedEncryptionKey } = await Crypto.generateAndWrapKey(publicKey)
     this.encryptionKey = encryptionKey
@@ -108,12 +108,10 @@ export default class Interceptors {
     const { CONFIG } = this.context
     const { DISABLE_CRPTOGRAPHY } = CONFIG
     const { data: body = {} } = response
-    const { data = {} } = body
+    const { data = {}, error } = body
     const { payload } = data
 
-    const publicKey = this.context.get(STORE_KEYS_MAP.PUBLIC_KEY)
-
-    if (DISABLE_CRPTOGRAPHY || publicKey || !payload) { return response }
+    if (DISABLE_CRPTOGRAPHY || error) { return response }
 
     const decryptedData = await Crypto.decryptData(payload, this.encryptionKey)
     response.data = decryptedData

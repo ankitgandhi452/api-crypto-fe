@@ -1,5 +1,5 @@
 {
-  "name": "@m92/api-crypto-fe",
+  "name": "@m92/http-client-fe-v2",
   "version": "0.0.2",
   "description": "Api Crypto Client",
   "main": "src/index.js",
@@ -9,7 +9,7 @@
     "clean": "rimraf dist/ && rimraf test-dist/",
     "build": "npm run build:source"
   },
-  "repository": "git@github.com:ankitgandhi452/api-crypto-fe.git",
+  "repository": "git@github.com:ankitgandhi452/http-client-fe-v2.git",
   "author": "Ankit Gandhi <ankitgandhi452@gmail.com>",
   "license": "MIT",
   "devDependencies": {

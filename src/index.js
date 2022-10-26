@@ -28,6 +28,7 @@ export default class HttpClient {
       const response = await this.client.request(requestOptions)
       return response
     } catch (error) {
+      console.log('error', error)
       const { request, response } = error
       // Handle Axios Response Error
       if (response) {
