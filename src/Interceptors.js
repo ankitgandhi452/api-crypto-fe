@@ -47,24 +47,22 @@ export default class Interceptors {
   }
 
   async requestInterceptor (request) {
-    console.log('requestInterceptor')
     let req = request
-    req = await this._addCustomHeader(req)
+    req = this._addCustomHeader(req)
     req = await this._encryptData(req)
     return req
   }
 
   async responseInterceptor (response) {
-    console.log('responseInterceptor')
     let res = response
     res = await this._decryptData(response)
     return res
   }
 
   _addCustomHeader (request) {
-    const { CUSTOM_HEADER_CONFIG, CONSTANTS } = this.context
+    const { CONSTANTS } = this.context
     const requestHeaders = {}
-    CUSTOM_HEADER_CONFIG.forEach((config) => {
+    this.CUSTOM_HEADER_CONFIG.forEach((config) => {
       const { REQUEST_HEADER_KEY, STORE_KEY } = config
       const headerValue = this.context.get(STORE_KEY)
       if (headerValue) {
@@ -88,7 +86,6 @@ export default class Interceptors {
 
     const publicKey = this.context.get(STORE_KEYS_MAP.PUBLIC_KEY)
 
-    console.log('publicKey', publicKey)
     if (DISABLE_CRPTOGRAPHY || !publicKey) { return request }
 
     const { encryptionKey, encryptedEncryptionKey } = await Crypto.generateAndWrapKey(publicKey)
@@ -99,7 +96,6 @@ export default class Interceptors {
     }
 
     const { data } = request
-    console.log('encryptionKey', encryptionKey)
     const payload = await Crypto.encryptData(data, encryptionKey)
 
     // Keeping user specified headers priority
@@ -117,7 +113,6 @@ export default class Interceptors {
 
     const publicKey = this.context.get(STORE_KEYS_MAP.PUBLIC_KEY)
 
-    console.log('_decryptData: publicKey', publicKey)
     if (DISABLE_CRPTOGRAPHY || publicKey || !payload) { return response }
 
     const decryptedData = await Crypto.decryptData(payload, this.encryptionKey)

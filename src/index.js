@@ -19,8 +19,8 @@ export default class HttpClient {
   async request (options = {}) {
     const requestOptions = formatRequestOptions(options)
     const interceptors = new Interceptors(this.context)
-    this.client.interceptors.request.use(interceptors.requestInteceptor)
-    this.client.interceptors.response.use(interceptors.responseInteceptor)
+    this.client.interceptors.request.use(interceptors.requestInterceptor)
+    this.client.interceptors.response.use(interceptors.responseInterceptor)
 
     try {
       const response = await this.client.request(requestOptions)
