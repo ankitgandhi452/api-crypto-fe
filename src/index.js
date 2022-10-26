@@ -17,8 +17,9 @@ export default class HttpClient {
   }
 
   async request (options = {}) {
+    const { CONFIG } = this.context
     const client = axios.create(this.context.axiosProps)
-    const requestOptions = formatRequestOptions(options)
+    const requestOptions = formatRequestOptions(options, CONFIG.API_ROUTES)
     const interceptors = new Interceptors(this.context)
     client.interceptors.request.use(interceptors.requestInterceptor)
     client.interceptors.response.use(interceptors.responseInterceptor)

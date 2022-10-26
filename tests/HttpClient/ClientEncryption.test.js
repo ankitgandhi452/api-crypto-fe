@@ -13,7 +13,7 @@ const expectedCode = 'INVALID_ENCRYPTION_PARAMS'
 const expectedClassification = 'CODE_ERROR'
 
 async function makeHanshakeCall () {
-  const options = { url: '/handshake', method: 'GET' }
+  const options = { apiPath: 'AUTHENTICATION.HANDSHAKE.GET' }
   const response = await httpClient.request(options)
   const { data: respBody } = response
   const { data } = respBody
@@ -21,7 +21,7 @@ async function makeHanshakeCall () {
   httpClient.setStore(STORE_KEYS_MAP.PUBLIC_KEY, publicKey)
 }
 async function makeServiceCall () {
-  const options = { url: '/api-crypto-sample/service', method: 'POST', data: reqBody }
+  const options = { apiPath: 'API_CRYPTO_SAMPLE.SERVICE.POST', data: reqBody }
   try {
     await httpClient.request(options)
   } catch (error) {
@@ -30,7 +30,19 @@ async function makeServiceCall () {
 }
 
 beforeAll(async () => {
-  const API_ROUTES = { _BASE: 'http://localhost:8080' }
+  const API_ROUTES = {
+    _BASE: 'http://localhost:8080',
+    AUTHENTICATION: {
+      HANDSHAKE: {
+        GET: '/handshake'
+      }
+    },
+    API_CRYPTO_SAMPLE: {
+      SERVICE: {
+        POST: '/api-crypto-sample/service'
+      }
+    }
+  }
   const ENABLE_CRPTOGRAPHY = true
   const CONFIG = { API_ROUTES, ENABLE_CRPTOGRAPHY }
   httpClient = new HttpClient(CONFIG)

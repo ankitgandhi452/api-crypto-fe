@@ -4,7 +4,7 @@
   "description": "Api Crypto Client",
   "main": "src/index.js",
   "scripts": {
-    "test": "jest --verbose",
+    "test": "jest --verbose --collectCoverage",
     "build:source": "rimraf dist/ && babel src/ --out-dir dist/ --copy-files",
     "clean": "rimraf dist/ && rimraf test-dist/",
     "build": "npm run build:source"
