@@ -14,3 +14,5 @@ jobs:
           node-version: 18
     - name: Run tests
       run: yarn test
+      with:
+          node-version: 18
