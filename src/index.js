@@ -1,34 +1,29 @@
-import DEFAULT_CONSTANTS from './defaults/CONSTANTS'
-import DEFAULT_CONFIG from './defaults/CONFIG'
+import axios from 'axios'
 import ApiError from './ApiError'
 import { formatRequestOptions } from './helper'
-import getContext from './context'
-import getInstance from './instance'
-import getInterceptos from './Interceptors'
+import Context from './Context'
+import Interceptors from './Interceptors'
 
 const { ERROR_CLASSIFICATIONS } = ApiError
 
-export default function HttpClientCreator (CONFIG, CONSTANTS = {}) {
-  const _CONFIG = { ...DEFAULT_CONFIG, ...CONFIG }
-  const _CONSTANTS = { ...DEFAULT_CONSTANTS, ...CONSTANTS }
+export default class HttpClient {
+  constructor (_CONFIG = {}, _CONSTANTS = {}) {
+    this.context = new Context(_CONFIG, _CONSTANTS)
+    this.client = axios.create(this.context.axiosProps)
 
-  const { API_ROUTES } = _CONFIG
-  const { _BASE, ...ROUTE_PATHS } = API_ROUTES
-  const routesPresent = !!Object.keys(ROUTE_PATHS || {}).length
-  if (!_BASE && routesPresent) {
-    console.warn('HttpClientCreator: _BASE is not passed in API_ROUTES')
+    this.setStore = this.context.set
+    this.getStore = this.context.get
+    this.delStore = this.context.del
   }
 
-  const context = getContext(_CONFIG, _CONSTANTS)
-
-  async function request (options = {}) {
-    const axiosInstance = getInstance(_CONFIG, _CONSTANTS)
+  async request (options = {}) {
     const requestOptions = formatRequestOptions(options)
-    const { requestInteceptor, responseInteceptor } = getInterceptos.call(context)
-    axiosInstance.interceptors.request.use(requestInteceptor)
-    axiosInstance.interceptors.response.use(responseInteceptor)
+    const interceptors = new Interceptors(this.context)
+    this.client.interceptors.request.use(interceptors.requestInteceptor)
+    this.client.interceptors.response.use(interceptors.responseInteceptor)
+
     try {
-      const response = await axiosInstance.request(requestOptions)
+      const response = await this.client.request(requestOptions)
       return response
     } catch (error) {
       const { request, response } = error
@@ -73,27 +68,5 @@ export default function HttpClientCreator (CONFIG, CONSTANTS = {}) {
       // logger.error(err.message, err)
       throw err
     }
-  }
-
-  function set (key = '', value = '') {
-    const storeKey = context.STORE_KEYS_MAP[key]
-
-    if (!storeKey) { return }
-
-    context.store[storeKey] = value
-  }
-
-  function get (key = '') {
-    const storeKey = context.STORE_KEYS_MAP[key]
-
-    if (!storeKey) { return }
-
-    return context.store[storeKey]
-  }
-
-  return {
-    request,
-    set,
-    get
   }
 }
