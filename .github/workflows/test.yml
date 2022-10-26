@@ -6,17 +6,11 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x]
-
-    name: Node ${{ matrix.node }} sample
     steps:
     - uses: actions/checkout@v1
     - name: Run Jest
       uses: stefanoeb/jest-action@1.0.3
       with:
-          node-version: ${{ matrix.node }}
+          node-version: 18
     - name: Run tests
       run: yarn test
