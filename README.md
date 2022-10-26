@@ -13,6 +13,7 @@ If you're using [ReactAppBoilerplate](https://github.com/ankitgandhi452/ReactApp
 1. Step 1 (Create a file HTTP_CLIENT_CONFIG.js)
 
 ```js
+// src/configurations/network/HTTP_CLIENT_CONFIG.js
 import API_ROUTES from './API_ROUTES'
 
 const { DISABLE_CRPTOGRAPHY = '', API_KEY } = process.env
@@ -31,6 +32,7 @@ export default HTTP_CLIENT_CONFIG
 2. Step 2 (Create a file HTTP_CLIENT_CONSTANTS.js)
 
 ```js
+// src/configurations/network/HTTP_CLIENT_CONSTANTS.js
 const { API_TIMEOUT, ACCESS_TOKEN_REQUEST_HEADER_KEY } = process.env
 
 const TIMEOUT = API_TIMEOUT || 3000
@@ -55,7 +57,7 @@ const HttpClient = new HttpClient(HTTP_CLIENT_CONFIG, HTTP_CLIENT_CONSTANTS)
 export default HttpClient
 ```
 
-3. Step 4 (Inject in Redux Thunk)
+4. Step 4 (Inject in Redux Thunk)
 
 ```js
 .....
