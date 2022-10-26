@@ -10,7 +10,7 @@ global.crypto = crypto
 let
   httpClient
 
-const expectedPublicKey = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvJEIUGHW2szjP4QZpUeEqtVxjP/qgPRXscGifFPwQauVwoy4Ctl4isIXsCJxmL9mcpn9oNi0LZJG3diOYJS2mUbpnuEOQXYDV0v907FXISCOypR7pxkyrmdPFjkHIGKuXRChAYJRsfeFPhGZjwGXg9nvF54R8zTb+PPPf3NwWdDmIkPQmrDv6iPTOZTcdg9taW8SBoJLQpomnb/o53rOrAHaONR4viha1ZrX36EtGfHw+xeMPAUL4eAtglJ8WoBazJOSzKTOfZrpD/7o9jKVUn/BnH6B77FEyGwd4ZJzQrxMzTxP+RhRXzlQscR0DQ8vwzXU+1wkoTti2SkQ++oD1wIDAQAB'
+const expectedPublicKey = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp2/gKUssBNZzG0KOqQECfGhv+Hzlp4Qj3nQhXw/+0t+WnQ6O75E1SZan59GYXek0X8fT5qs1qLRKTYn8ZNIxe3BvWRET82H+ZaAG/jakFK+a19pa49Hy4kl0Gy5xiWJ93Hudh4ZxZcdYU6wNY/x2hSEyv1ag+adPH+5A9EtZ1F4f3zl5BKsJpGqSk1ZsNDk09AyoTyA3gCMqyzfiYvpf8Tj31Dooqtlkq2xBi7UA0Z/yv/Xo9HYMtsjCQIIc0hrH0IaFhm8iBTwzVtam2CMIFaxygAPJUV4cZ7aoxjusbfGP2kyJsZlMnYAhWgvh6ljt1o3iQQDHA+sW6AeYLSNi2QIDAQAB'
 
 beforeAll(async () => {
   const API_ROUTES = {
@@ -36,7 +36,9 @@ describe('Run HttpClient Test', () => {
     httpClient.setStore('PUBLIC_KEY', expectedPublicKey)
     const options = { url: '/api-crypto-sample/service', method: 'POST', data: { test: 'test' } }
     const response = await httpClient.request(options)
-    const { status } = response
+    const { status, data: resBody } = response
+    const { statusCode } = resBody
     expect(status).toBe(200)
+    expect(statusCode).toBe(200)
   })
 })

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import ApiError from './ApiError'
 import { formatRequestOptions } from './helper'
-import Context from './Context'
+import Context, { STORE_KEYS_MAP } from './Context'
 import Interceptors from './Interceptors'
 
 const { ERROR_CLASSIFICATIONS } = ApiError
@@ -10,6 +10,8 @@ export default class HttpClient {
   constructor (_CONFIG = {}, _CONSTANTS = {}) {
     this.context = new Context(_CONFIG, _CONSTANTS)
     this.client = axios.create(this.context.axiosProps)
+
+    this.request = this.request.bind(this)
 
     this.setStore = this.context.set
     this.getStore = this.context.get
@@ -30,17 +32,23 @@ export default class HttpClient {
       // Handle Axios Response Error
       if (response) {
         const { status, data: body } = response
-        const { statusCode, message } = body
-        const classification = ERROR_CLASSIFICATIONS.API_CALL
+        const { statusCode, message, error: err } = body
+        const { code, publicKey } = err
 
+        if (code === 'API_CRYPTO::PRIVATE_KEY_NOT_FOUND') {
+          this.setStore(STORE_KEYS_MAP.PUBLIC_KEY, publicKey)
+          return await this.request(options)
+        }
+
+        const classification = ERROR_CLASSIFICATIONS.API_CALL
         const errorParams = {
           statusCode: (statusCode || status),
           message: (message || undefined),
           classification
         }
         const errorObj = body
-        const err = new ApiError(errorObj, errorParams)
-        throw err
+        const apiError = new ApiError(errorObj, errorParams)
+        throw apiError
       }
 
       // Handle Axios Request Error
@@ -52,10 +60,10 @@ export default class HttpClient {
           message,
           classification
         }
-        const err = new ApiError(error, errorParams)
+        const apiError = new ApiError(error, errorParams)
         // logger.error(err.message, err)
-        delete err.error.stack
-        throw err
+        delete apiError.error.stack
+        throw apiError
       }
 
       // Handle any other form of error
@@ -64,9 +72,9 @@ export default class HttpClient {
         statusCode: -2,
         classification
       }
-      const err = new ApiError(error, errorParams)
+      const apiError = new ApiError(error, errorParams)
       // logger.error(err.message, err)
-      throw err
+      throw apiError
     }
   }
 }
