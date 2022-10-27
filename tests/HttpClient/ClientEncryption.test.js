@@ -2,7 +2,7 @@
 import { expect, describe, beforeAll, test } from '@jest/globals'
 import { webcrypto as crypto } from 'node:crypto'
 import HttpClient from '../../src'
-import { STORE_KEYS_MAP } from '../../src/Context'
+import { CONTEXT_MAP } from '../../src/defaults/CONSTANTS'
 
 global.window = { crypto }
 
@@ -12,15 +12,15 @@ const expectedStatusCode = -2
 const expectedCode = 'INVALID_ENCRYPTION_PARAMS'
 const expectedClassification = 'CODE_ERROR'
 
-async function makeHanshakeCall() {
+async function makeHanshakeCall () {
   const options = { apiPath: 'AUTHENTICATION.HANDSHAKE.GET' }
   const response = await httpClient.request(options)
   const { data: respBody } = response
   const { data } = respBody
   const { publicKey } = data
-  httpClient.set(STORE_KEYS_MAP.PUBLIC_KEY, publicKey)
+  httpClient.set(CONTEXT_MAP.PUBLIC_KEY, publicKey)
 }
-async function makeServiceCall() {
+async function makeServiceCall () {
   const options = { apiPath: 'API_CRYPTO_SAMPLE.SERVICE.POST', data: reqBody }
   try {
     await httpClient.request(options)
