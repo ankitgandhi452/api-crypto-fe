@@ -10,19 +10,24 @@ import ClientManager from './ClientManager'
 
 const { ERROR_CLASSIFICATIONS } = ApiError
 
+// Custom Context Keys
 const REQUEST_CONTEXT_MAP = {
   REQUEST_OPTIONS: 'REQUEST_OPTIONS'
 }
 
 export default class HttpClient {
+  // Http Client Store
   #context = new Store()
   constructor (_CONFIG = {}, _CONSTANTS = {}) {
+    // Merge Config & Constants
     const CONFIG = { ...DEFAULT_CONFIG, ..._CONFIG }
     const CONSTANTS = { ...DEFAULT_CONSTANTS, ..._CONSTANTS }
 
     const { API_ROUTES, API_KEY } = CONFIG
     const { _BASE, ...ROUTE_PATHS } = API_ROUTES
     const routesPresent = !!Object.keys(ROUTE_PATHS || {}).length
+
+    // Warn Integrater for issues
     if (!_BASE && routesPresent) {
       console.warn('HttpClientCreator: _BASE is not passed in API_ROUTES')
     }
@@ -36,24 +41,34 @@ export default class HttpClient {
     this.#context.set(CONTEXT_MAP.CLIENT_ID, CLIENT_ID)
     this.#context.set(CONTEXT_MAP.SESSION_ID, sessionId)
 
+    // Bind Functions
     this.set = this.#context.set
     this.get = this.#context.get
     this.del = this.#context.del
   }
 
   async request (options = {}) {
+    // Create a local context for all interceptos
     const requestContext = this.#context.clone()
     const CONFIG = requestContext.get(CONTEXT_MAP.CONFIG)
+
+    // Feature to use apiPath option
     const requestOptions = formatRequestOptions(options, CONFIG.API_ROUTES)
 
+    // Set Options to local context for all interceptors
     requestContext.set(REQUEST_CONTEXT_MAP.REQUEST_OPTIONS, requestOptions)
+
+    // Create new axios client with interceptors attached
     const client = new ClientManager(requestContext)
 
     try {
       const response = await client.request(requestOptions)
+
+      // Store all keys which can rotate per request
       this.#saveRotateKeys(requestContext)
       return response
     } catch (error) {
+      // Store all keys which can rotate per request
       this.#saveRotateKeys(requestContext)
       const { request, response } = error
       // Handle Axios Response Error
@@ -105,6 +120,7 @@ export default class HttpClient {
     }
   }
 
+  // Store keys which can rotate per request
   #saveRotateKeys (requestContext) {
     ROTATE_VALUE_KEYS.forEach(key => {
       const value = requestContext.get(key)
