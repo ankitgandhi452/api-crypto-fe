@@ -2,7 +2,7 @@
 import { expect, describe, beforeAll, test } from '@jest/globals'
 import { webcrypto as crypto } from 'node:crypto'
 import HttpClient from '../../src'
-import { STORE_KEYS_MAP } from '../../src/Context'
+import { CONTEXT_MAP } from '../../src/defaults/CONSTANTS'
 
 global.window = { crypto }
 
@@ -11,22 +11,35 @@ const reqBody = { req: 'req' }
 const expectedResponse = { resData: { resData: 'resData' }, reqData: { req: 'req' } }
 
 async function makeHanshakeCall () {
-  const options = { url: '/handshake', method: 'GET' }
+  const options = { apiPath: 'AUTHENTICATION.HANDSHAKE.GET' }
   const response = await httpClient.request(options)
   const { data: respBody } = response
   const { data } = respBody
   const { publicKey } = data
-  httpClient.setStore(STORE_KEYS_MAP.PUBLIC_KEY, publicKey)
+  httpClient.set(CONTEXT_MAP.PUBLIC_KEY, publicKey)
 }
 async function makeServiceCall () {
-  const options = { url: '/api-crypto-sample/service', method: 'POST', data: reqBody }
+  const options = { apiPath: 'API_CRYPTO_SAMPLE.SERVICE.POST', data: reqBody }
   response = await httpClient.request(options)
 }
 
 beforeAll(async () => {
-  const API_ROUTES = { _BASE: 'http://localhost:8080' }
+  const API_ROUTES = {
+    _BASE: 'http://localhost:8080',
+    AUTHENTICATION: {
+      HANDSHAKE: {
+        GET: '/handshake'
+      }
+    },
+    API_CRYPTO_SAMPLE: {
+      SERVICE: {
+        POST: '/api-crypto-sample/service'
+      }
+    }
+  }
   const ENABLE_CRPTOGRAPHY = false
-  const CONFIG = { API_ROUTES, ENABLE_CRPTOGRAPHY }
+  const API_KEY = 'API_KEY'
+  const CONFIG = { API_ROUTES, ENABLE_CRPTOGRAPHY, API_KEY }
   httpClient = new HttpClient(CONFIG)
   await makeHanshakeCall()
   await makeServiceCall()
