@@ -6,21 +6,16 @@ import Interceptors from './Interceptors'
 
 const { ERROR_CLASSIFICATIONS } = ApiError
 
-export default class HttpClient {
+export default class HttpClient extends Context {
   constructor (_CONFIG = {}, _CONSTANTS = {}) {
-    this.context = new Context(_CONFIG, _CONSTANTS)
-    this.request = this.request.bind(this)
-
-    this.setStore = this.context.set
-    this.getStore = this.context.get
-    this.delStore = this.context.del
+    super(_CONFIG, _CONSTANTS)
   }
 
   async request (options = {}) {
-    const { CONFIG } = this.context
-    const client = axios.create(this.context.axiosProps)
+    const { CONFIG } = this
+    const client = axios.create(this.axiosProps)
     const requestOptions = formatRequestOptions(options, CONFIG.API_ROUTES)
-    const interceptors = new Interceptors(this.context)
+    const interceptors = new Interceptors(this)
     client.interceptors.request.use(interceptors.requestInterceptor)
     client.interceptors.response.use(interceptors.responseInterceptor)
 
@@ -36,7 +31,7 @@ export default class HttpClient {
         const { code, publicKey } = err
 
         if (code === 'API_CRYPTO::PRIVATE_KEY_NOT_FOUND') {
-          this.setStore(STORE_KEYS_MAP.PUBLIC_KEY, publicKey)
+          this.set(STORE_KEYS_MAP.PUBLIC_KEY, publicKey)
           return await this.request(options)
         }
 

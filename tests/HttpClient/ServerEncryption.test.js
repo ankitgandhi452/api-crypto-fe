@@ -12,15 +12,15 @@ const expectedStatusCode = 400
 const expectedCode = 'API_CRYPTO::INVALID_ENCRYPTION_KEY'
 const expectedClassification = 'API_CALL_ERROR'
 
-async function makeHanshakeCall () {
+async function makeHanshakeCall() {
   const options = { apiPath: 'AUTHENTICATION.HANDSHAKE.GET' }
   const response = await httpClient.request(options)
   const { data: respBody } = response
   const { data } = respBody
   const { publicKey } = data
-  httpClient.setStore(STORE_KEYS_MAP.PUBLIC_KEY, publicKey)
+  httpClient.set(STORE_KEYS_MAP.PUBLIC_KEY, publicKey)
 }
-async function makeServiceCall () {
+async function makeServiceCall() {
   const options = { apiPath: 'API_CRYPTO_SAMPLE.SERVICE.POST', data: reqBody }
   try {
     await httpClient.request(options)

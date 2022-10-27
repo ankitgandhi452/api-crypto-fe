@@ -8,6 +8,7 @@ export const STORE_KEYS_MAP = {
   PUBLIC_KEY: 'PUBLIC_KEY'
 }
 export default class Context {
+  #store = {}
   constructor (CONFIG = {}, CONSTANTS = {}) {
     const _CONFIG = { ...DEFAULT_CONFIG, ...CONFIG }
     const _CONSTANTS = { ...DEFAULT_CONSTANTS, ...CONSTANTS }
@@ -40,8 +41,6 @@ export default class Context {
       }
     }
 
-    this.store = {}
-
     this.set = this.set.bind(this)
     this.get = this.get.bind(this)
     this.del = this.del.bind(this)
@@ -52,7 +51,7 @@ export default class Context {
 
     if (!storeKey) { return }
 
-    this.store[storeKey] = value
+    this.#store[storeKey] = value
   }
 
   get (key = '') {
@@ -60,7 +59,7 @@ export default class Context {
 
     if (!storeKey) { return }
 
-    return this.store[storeKey]
+    return this.#store[storeKey]
   }
 
   del (key = '') {
@@ -68,8 +67,8 @@ export default class Context {
 
     if (!storeKey) { return }
 
-    const value = this.store[storeKey]
-    delete this.store[storeKey]
+    const value = this.#store[storeKey]
+    delete this.#store[storeKey]
     return value
   }
 }

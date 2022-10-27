@@ -10,15 +10,15 @@ let httpClient, response
 const reqBody = { req: 'req' }
 const expectedResponse = { resData: { resData: 'resData' }, reqData: { req: 'req' } }
 
-async function makeHanshakeCall () {
+async function makeHanshakeCall() {
   const options = { apiPath: 'AUTHENTICATION.HANDSHAKE.GET' }
   const response = await httpClient.request(options)
   const { data: respBody } = response
   const { data } = respBody
   const { publicKey } = data
-  httpClient.setStore(STORE_KEYS_MAP.PUBLIC_KEY, publicKey)
+  httpClient.set(STORE_KEYS_MAP.PUBLIC_KEY, publicKey)
 }
-async function makeServiceCall () {
+async function makeServiceCall() {
   const options = { apiPath: 'API_CRYPTO_SAMPLE.SERVICE.POST', data: reqBody }
   response = await httpClient.request(options)
 }
