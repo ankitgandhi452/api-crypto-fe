@@ -22,7 +22,7 @@ export default class HeaderInterceptor {
   constructor (context = {}) {
     this.context = context
 
-    const requestId = v4()
+    const requestId = v4().replaceAll('-', '')
     const contextKey = REQUEST_HEADER_CONTEXT_MAP.REQUEST_ID_REQUEST_HEADER_KEY
     this.context.set(contextKey, requestId)
 

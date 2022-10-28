@@ -34,7 +34,7 @@ export default class HttpClient {
 
     // Init Context
     const { CLIENT_ID } = CONSTANTS
-    const sessionId = v4()
+    const sessionId = v4().replaceAll('-', '')
     this.#context.set(CONTEXT_MAP.CONFIG, CONFIG)
     this.#context.set(CONTEXT_MAP.CONSTANTS, CONSTANTS)
     this.#context.set(CONTEXT_MAP.API_KEY, API_KEY)
