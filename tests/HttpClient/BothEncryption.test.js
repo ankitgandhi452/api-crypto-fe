@@ -17,6 +17,7 @@ async function makeHanshakeCall () {
   const { data } = respBody
   const { publicKey } = data
   httpClient.set(CONTEXT_MAP.PUBLIC_KEY, publicKey)
+  httpClient.set(CONTEXT_MAP.APP_UID, 'APP_UID')
 }
 async function makeServiceCall () {
   const options = { apiPath: 'API_CRYPTO_SAMPLE.SERVICE.POST', data: reqBody }
@@ -38,7 +39,8 @@ beforeAll(async () => {
     }
   }
   const ENABLE_CRPTOGRAPHY = true
-  const CONFIG = { API_ROUTES, ENABLE_CRPTOGRAPHY }
+  const API_KEY = 'API_KEY'
+  const CONFIG = { API_ROUTES, ENABLE_CRPTOGRAPHY, API_KEY }
   httpClient = new HttpClient(CONFIG)
   await makeHanshakeCall()
   await makeServiceCall()
