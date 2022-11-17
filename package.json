@@ -4,10 +4,7 @@
   "description": "Api Crypto Client",
   "main": "src/index.js",
   "scripts": {
-    "test": "jest --verbose --collectCoverage",
-    "build:source": "rimraf dist/ && babel src/ --out-dir dist/ --copy-files",
-    "clean": "rimraf dist/ && rimraf test-dist/",
-    "build": "npm run build:source"
+    "test": "jest --verbose --collectCoverage"
   },
   "repository": "git@github.com:ankitgandhi452/http-client-fe-v2.git",
   "author": "Ankit Gandhi <ankitgandhi452@gmail.com>",
