@@ -10,11 +10,6 @@ import ClientManager from './ClientManager'
 
 const { ERROR_CLASSIFICATIONS } = ApiError
 
-// Custom Context Keys
-const REQUEST_CONTEXT_MAP = {
-  REQUEST_OPTIONS: 'REQUEST_OPTIONS'
-}
-
 export default class HttpClient {
   // Http Client Store
   #context = new Store()
@@ -56,7 +51,7 @@ export default class HttpClient {
     const requestOptions = formatRequestOptions(options, CONFIG.API_ROUTES)
 
     // Set Options to local context for all interceptors
-    requestContext.set(REQUEST_CONTEXT_MAP.REQUEST_OPTIONS, requestOptions)
+    requestContext.set(CONTEXT_MAP.REQUEST_OPTIONS, requestOptions)
 
     // Create new axios client with interceptors attached
     const client = new ClientManager(requestContext)
