@@ -16,11 +16,11 @@ export default class CryptoInterceptor {
 
     const { ENCRYPTION_KEY_REQUEST_HEADER } = CONSTANTS
     const { ENABLE_CRPTOGRAPHY } = CONFIG
-    const { method } = request
 
     const publicKey = this.context.get(CONTEXT_MAP.PUBLIC_KEY)
+    const { disableCrypto = false } = this.context.get(CONTEXT_MAP.REQUEST_OPTIONS)
 
-    if (!ENABLE_CRPTOGRAPHY || method.toLowerCase() === 'get') { return request }
+    if (!ENABLE_CRPTOGRAPHY || disableCrypto) { return request }
 
     const { encryptionKey, encryptedEncryptionKey } = await Crypto.generateAndWrapKey(publicKey)
     this.#encryptionKey = encryptionKey
@@ -44,10 +44,9 @@ export default class CryptoInterceptor {
     const { data: body = {} } = response
     const { data = {}, error } = body
     const { payload } = data
-    const { config = {} } = response
-    const { method } = config
 
-    if (!ENABLE_CRPTOGRAPHY || method.toLowerCase() === 'get' || error) { return response }
+    const { disableCrypto = false } = this.context.get(CONTEXT_MAP.REQUEST_OPTIONS)
+    if (!ENABLE_CRPTOGRAPHY || disableCrypto || error) { return response }
 
     const decryptedData = await Crypto.decryptData(payload, this.#encryptionKey)
     response.data = decryptedData
