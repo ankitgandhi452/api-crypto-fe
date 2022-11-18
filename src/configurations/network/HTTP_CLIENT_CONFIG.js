@@ -1,0 +1,14 @@
+// src/configurations/network/HTTP_CLIENT_CONFIG.js
+import API_ROUTES from './API_ROUTES'
+
+const { REACT_APP_ENABLE_CRPTOGRAPHY = '', REACT_APP_API_KEY } = process.env
+
+const ENABLE_CRPTOGRAPHY = REACT_APP_ENABLE_CRPTOGRAPHY.trim().toLowerCase() === 'true'
+
+const HTTP_CLIENT_CONFIG = {
+  ENABLE_CRPTOGRAPHY,
+  API_KEY: REACT_APP_API_KEY,
+  API_ROUTES
+}
+
+export default HTTP_CLIENT_CONFIG
