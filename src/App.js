@@ -1,14 +1,23 @@
 import { Component } from 'react'
 import HttpClient from './configurations/network/HttpClient'
+import { Box, Grid, Paper, Typography } from '@mui/material'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
+import CssBaseline from '@mui/material/CssBaseline'
 import './App.css'
 
+const theme = createTheme({
+  palette: {
+    mode: 'dark'
+  }
+})
 export default class App extends Component {
   constructor (props) {
     super(props)
 
     this.state = {
       publicKey: '',
-      response: {}
+      response: {},
+      reqData: { test: 'test' }
     }
 
     this.setPublicKey = this.setPublicKey.bind(this)
@@ -42,9 +51,10 @@ export default class App extends Component {
   }
 
   async doService () {
+    const { reqData } = this.state
     const serviceOptions = {
       apiPath: 'API_CRYPTO.SERVICE.POST',
-      data: { test: 'test' }
+      data: reqData
     }
 
     try {
@@ -65,12 +75,37 @@ export default class App extends Component {
   }
 
   render () {
-    const { publicKey, response } = this.state
+    const { publicKey, reqData, response } = this.state
     return (
-      <div className='App'>
-        <p>publicKey: {publicKey}</p>
-        <p>response: {JSON.stringify(response, null, 2)}</p>
-      </div>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Box sx={{ p: 2 }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={4}>
+              <Paper sx={{ p: 4, height: '100%' }}>
+                <Typography variant='h5' gutterBottom>Public Key:</Typography>
+                <Typography sx={{ wordWrap: 'break-word' }} variant='body1'>{publicKey}</Typography>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Paper sx={{ p: 4, height: '100%' }}>
+                <Typography variant='h5' gutterBottom>Request Body:</Typography>
+                <Typography variant='body1'>
+                  <pre>{JSON.stringify(reqData, null, 2)}</pre>
+                </Typography>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Paper sx={{ p: 4, height: '100%' }}>
+                <Typography variant='h5' gutterBottom>Response Body:</Typography>
+                <Typography variant='body1'>
+                  <pre>{JSON.stringify(response, null, 2)}</pre>
+                </Typography>
+              </Paper>
+            </Grid>
+          </Grid>
+        </Box>
+      </ThemeProvider>
     )
   }
 }
